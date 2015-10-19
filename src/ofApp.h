@@ -25,7 +25,7 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
 		
 		void newResponse(ofxHttpResponse & response);
-		void getLinks();
+		void parseHtmlPage();
 
 	private:
 		enum StatusResponse

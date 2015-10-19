@@ -46,7 +46,8 @@ void ofApp::newResponse(ofxHttpResponse & response) {
 	if (response.status != -1) {
 		responseStr = response.responseBody;
 		appStatus = RESPONSE_TRUE;
-		getLinks();
+		//getLinks();
+		parseHtmlPage();
 	}
 	else {
 		appStatus = ERROR_CONNECTION;
@@ -67,8 +68,12 @@ void ofApp::keyReleased(int key){
 }
 
 //--------------------------------------------------------------
-void ofApp::getLinks() {
-	std::vector<std::string> links = parser.getAhrefs(responseStr);
+void ofApp::parseHtmlPage() {
+	//responseStr = "<!DOCTYPE html><html><head><title><meta http-equiv='X - UA - Compatible' content='IE = edge'><meta http-equiv='X - UA - Compatible' content='IE = edge' / ></meta></title></head><body><!--ajkajhkjajd--></body></html><!--From cache.Time: 7.7009201049805E-5 Europe / Moscow Sat, 17 Oct 2015 22 : 22 : 50 + 0300-->";
+	bool parseOk = parser.parseHtmlPage(responseStr);
+	if (!parseOk) {
+		std::cout << "[ERROR] Error parse web page" << std::endl;
+	}
 }
 
 //--------------------------------------------------------------

@@ -13,9 +13,13 @@ public:
 	void update();
 	void draw();
 	
-	std::vector<std::string> getAhrefs(std::string responseStr);
+	bool parseHtmlPage(std::string responseStr);
 	std::string removeSubstring(std::string str, std::string substr);
 	std::string removeCommentTags(std::string str);
+	std::string removeMetaTags(std::string str);
+	std::string removeHead(std::string str);
+	std::string removeTagsWhithSubstring(std::string str, std::string substr);
+	std::string removeScripts(std::string str);
 
 private:
 	ofxXmlSettings xml;
