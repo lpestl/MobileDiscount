@@ -38,11 +38,15 @@ bool ParseWebPages::parseHtmlPage(std::string responseStr) {
 	responseStr = removeHead(responseStr);
 	//std::cout << responseStr.length() << std::endl;
 	responseStr = removeTagsWhithSubstring(responseStr, "div");
+	responseStr = removeTagsWhithSubstring(responseStr, "strong");
 	//std::cout << responseStr.length() << std::endl;
 	responseStr = removeScripts(responseStr);
+
+	responseStr = UTF8_to_CP1251(responseStr);
+
 	std::cout << "[INFO] Buffer length after conversion. " << responseStr.length() << std::endl;
 
-	//std::cout << responseStr << std::endl;
+	//std::cout << responseStr.c_str() << std::endl;
 	
 	FILE *out = fopen("data//parse.xml", "w");
 	fprintf(out, "%s", responseStr.c_str());
@@ -76,6 +80,56 @@ bool ParseWebPages::parseHtmlPage(std::string responseStr) {
 			*/
 
 	return status;
+}
+
+std::string ParseWebPages::UTF8_to_CP1251(std::string const & utf8)
+{
+	if (!utf8.empty())
+	{
+		int wchlen = MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), utf8.size(), NULL, 0);
+		if (wchlen > 0 && wchlen != 0xFFFD)
+		{
+			std::vector<wchar_t> wbuf(wchlen);
+			MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), utf8.size(), &wbuf[0], wchlen);
+			std::vector<char> buf(wchlen);
+			WideCharToMultiByte(1251, 0, &wbuf[0], wchlen, &buf[0], wchlen, 0, 0);
+
+			return std::string(&buf[0], wchlen);
+		}
+	}
+	return std::string();
+}
+
+void ParseWebPages::parseCities() {
+	xml.pushTag("html");
+	xml.pushTag("body");
+	for (int i = 0; i < xml.getNumTags("ul"); i++) {
+		std::string menuCheck = xml.getAttribute("ul", "class", "defaultAttribute", i);
+ 		if (menuCheck == "menu") 
+			break;
+		xml.pushTag("ul", i);
+		for (int j = 0; j < xml.getNumTags("li"); j++) {
+			xml.pushTag("li", j);
+			cities tempCity;
+
+			xml.pushTag("a");
+			tempCity.city = xml.getValue("span", "defaultCity");
+			//tempCity.city = UTF8_to_CP1251(tempCity.city);
+			xml.popTag();
+
+			tempCity.shortUrl = xml.getAttribute("a", "href", "#");
+			citiesVector.push_back(tempCity);
+			
+			xml.popTag();
+		}
+		xml.popTag();
+	}
+	xml.popTag();
+	xml.popTag();
+}
+
+std::vector<cities> ParseWebPages::getCities() {
+	return citiesVector;
 }
 
 std::string ParseWebPages::removeSubstring(std::string str, std::string substr) {

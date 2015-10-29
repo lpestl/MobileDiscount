@@ -4,6 +4,10 @@
 #include "ofxHttpUtils.h"
 #include <vector>
 #include "ParseWebPages.h"
+#include "ofxTrueTypeFontUC.h"
+//#include <corecrt_wstring.h>
+//#include <string>
+//#include <string.h>
 
 class ofApp : public ofBaseApp{
 
@@ -38,4 +42,7 @@ class ofApp : public ofBaseApp{
 		//string requestStr;
 		string action_url;
 		ParseWebPages parser;
+		vector<cities> citiesVector;
+		ofxTrueTypeFontUC tahomaFont;
+		//ofxTrueTypeFontUC tahomaBoldFont;
 };

@@ -10,6 +10,8 @@ void ofApp::setup(){
 
 	appStatus = RESPONSE_TRUE;
 
+	tahomaFont.loadFont("data\\Fonts\\Tahoma.ttf", 14, true, true);
+
 	parser.setup();
 }
 
@@ -31,7 +33,11 @@ void ofApp::draw() {
 		break;
 	case RESPONSE_TRUE:
 		ofSetColor(0, 255, 0);
-		ofDrawBitmapString(responseStr, 20, 60);
+		//ofDrawBitmapString(responseStr, 20, 60);
+		for (int i = 0; i < citiesVector.size(); i++) {
+			//ofDrawBitmapString(citiesVector[i].city + " : " + citiesVector[i].shortUrl , 20, 20 + 20 * i);
+			tahomaFont.drawString(citiesVector[i].city + " : " + citiesVector[i].shortUrl, 20, 20 + 20 * i);
+		}
 		break;
 	default:
 		ofSetColor(255, 255, 0);
@@ -45,6 +51,7 @@ void ofApp::newResponse(ofxHttpResponse & response) {
 	//responseStr = ofToString(response.status) + ": " + (string)response.responseBody;
 	if (response.status != -1) {
 		responseStr = response.responseBody;
+		
 		appStatus = RESPONSE_TRUE;
 		//getLinks();
 		parseHtmlPage();
@@ -73,6 +80,15 @@ void ofApp::parseHtmlPage() {
 	bool parseOk = parser.parseHtmlPage(responseStr);
 	if (!parseOk) {
 		std::cout << "[ERROR] Error parse web page" << std::endl;
+	}
+	else {
+		parser.parseCities();
+		citiesVector.clear();
+		citiesVector = parser.getCities();
+
+		for (int i = 0; i < citiesVector.size(); i++) {
+			std::cout << citiesVector[i].city << " : " << citiesVector[i].shortUrl << endl;
+		}
 	}
 }
 

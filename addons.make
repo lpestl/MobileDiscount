@@ -1,2 +1,3 @@
 ofxHttpUtils
+ofxTrueTypeFontUC
 ofxXmlSettings
